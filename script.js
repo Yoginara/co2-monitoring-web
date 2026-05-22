@@ -121,8 +121,9 @@ function resetGraph() {
 
 // === Ambil Data Dashboard (50 Data Terbaru) ===
 async function fetchInitialData() {
+  // MEMPERBAIKI: Nama tabel diganti menjadi 'co2-monitoring'
   const { data: supabaseData, error } = await supabase
-    .from('co2_data')
+    .from('co2-monitoring')
     .select('created_at, co2')
     .order('created_at', { ascending: true })
     .limit(50);
@@ -147,13 +148,12 @@ document.getElementById("filterForm").addEventListener("submit", async (e) => {
   const startDate = document.getElementById("startDate").value;
   const endDate = document.getElementById("endDate").value;
 
-  // Mengatur batas akhir hari sampai jam 23:59:59
   const startISO = new Date(startDate).toISOString();
   const endISO = new Date(new Date(endDate).setHours(23, 59, 59, 999)).toISOString();
 
-  // Memanggil data langsung dari database Supabase berdasarkan rentang waktu pilihan
+  // MEMPERBAIKI: Nama tabel diganti menjadi 'co2-monitoring'
   const { data: historisData, error } = await supabase
-    .from('co2_data')
+    .from('co2-monitoring')
     .select('created_at, co2')
     .gte('created_at', startISO)
     .lte('created_at', endISO)
@@ -172,16 +172,13 @@ document.getElementById("filterForm").addEventListener("submit", async (e) => {
 function downloadCSV() {
   if (dataHistorisFiltered.length === 0) return alert("Tampilkan data historis terlebih dahulu sebelum mengunduh!");
 
-  // Membuat susunan header kolom file CSV
   let csvContent = "data:text/csv;charset=utf-8,Waktu,Kadar CO2 (ppm)\n";
 
-  // Memasukkan isi tabel baris demi baris ke format CSV
   dataHistorisFiltered.forEach(item => {
     const dateFormatted = new Date(item.waktu).toLocaleString("id-ID").replace(",", "");
     csvContent += `${dateFormatted},${item.co2}\n`;
   });
 
-  // Membuat tautan unduh otomatis di browser internet
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
@@ -192,12 +189,12 @@ function downloadCSV() {
 }
 
 // === Real-Time Listener untuk Dashboard ===
+// MEMPERBAIKI: Menyesuaikan parameter tabel dengan 'co2-monitoring'
 supabase
   .channel('perubahan-co2-realtime')
-  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'co2_data' }, payload => {
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'co2-monitoring' }, payload => {
     const newData = { waktu: payload.new.created_at, co2: payload.new.co2 };
     data.push(newData);
-    // Hanya update dashboard chart jika data masuk saat membuka halaman dashboard
     if (document.getElementById('dashboard').classList.contains('active')) {
       updateChart(data);
       updateStatus();
@@ -211,7 +208,6 @@ function showSection(sectionId) {
   const target = document.getElementById(sectionId);
   if (target) target.classList.add("active");
 
-  // Jika pindah ke halaman historis, kosongkan atau render data terakhir yang difilter
   if (sectionId === 'historis') {
     renderTable(dataHistorisFiltered);
   }
