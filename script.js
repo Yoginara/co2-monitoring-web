@@ -1,9 +1,6 @@
-// === KREDENSIAL SUPABASE CLOUD ===
-const SUPABASE_URL = "https://fjxqacuifwiyowblnzkj.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqeHFhY3VpZndpeW93YmxuemtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MTYyNzksImV4cCI6MjA5NDk5MjI3OX0.cF7AG0WrGQ7ZS638YkOVpR-KnultzgL3ieKEEZFnrCw";
-
-// FIX BENTROK: Menggunakan nama 'supabaseClient' agar tidak tabrakan dengan object bawaan CDN di index.html
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// =================================================================
+// LOGIKA UTAMA MONITORING CO2 (SUDAH TERKONEKSI VIA INDEX.HTML)
+// =================================================================
 
 let data = []; // Menyimpan data real-time dashboard
 let dataHistorisFiltered = []; // Menyimpan data hasil filter halaman historis
@@ -121,7 +118,7 @@ function resetGraph() {
 
 // === Ambil Data Dashboard (50 Data Terbaru) ===
 async function fetchInitialData() {
-  const { data: supabaseData, error } = await supabaseClient
+  const { data: supabaseData, error } = await supabase
     .from('co2-monitoring')
     .select('created_at, co2')
     .order('created_at', { ascending: true })
@@ -150,7 +147,7 @@ document.getElementById("filterForm").addEventListener("submit", async (e) => {
   const startISO = new Date(startDate).toISOString();
   const endISO = new Date(new Date(endDate).setHours(23, 59, 59, 999)).toISOString();
 
-  const { data: historisData, error } = await supabaseClient
+  const { data: historisData, error } = await supabase
     .from('co2-monitoring')
     .select('created_at, co2')
     .gte('created_at', startISO)
@@ -187,7 +184,7 @@ function downloadCSV() {
 }
 
 // === Real-Time Listener untuk Dashboard ===
-supabaseClient
+supabase
   .channel('perubahan-co2-realtime')
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'co2-monitoring' }, payload => {
     const newData = { waktu: payload.new.created_at, co2: payload.new.co2 };
