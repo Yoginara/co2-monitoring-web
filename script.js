@@ -2,7 +2,7 @@
 const SUPABASE_URL = "https://fjxqacuifwiyowblnzkj.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqeHFhY3VpZndpeW93YmxuemtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MTYyNzksImV4cCI6MjA5NDk5MjI3OX0.cF7AG0WrGQ7ZS638YkOVpR-KnultzgL3ieKEEZFnrCw";
 
-// MEMPERBAIKI: Mengubah nama variabel dari 'supabase' menjadi 'supabaseClient' agar tidak bentrok dengan CDN global
+// FIX BENTROK: Menggunakan nama 'supabaseClient' agar tidak tabrakan dengan object bawaan CDN di index.html
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let data = []; // Menyimpan data real-time dashboard
@@ -121,7 +121,6 @@ function resetGraph() {
 
 // === Ambil Data Dashboard (50 Data Terbaru) ===
 async function fetchInitialData() {
-  // MEMPERBAIKI: Menggunakan variabel baru 'supabaseClient'
   const { data: supabaseData, error } = await supabaseClient
     .from('co2-monitoring')
     .select('created_at, co2')
@@ -151,7 +150,6 @@ document.getElementById("filterForm").addEventListener("submit", async (e) => {
   const startISO = new Date(startDate).toISOString();
   const endISO = new Date(new Date(endDate).setHours(23, 59, 59, 999)).toISOString();
 
-  // MEMPERBAIKI: Menggunakan variabel baru 'supabaseClient'
   const { data: historisData, error } = await supabaseClient
     .from('co2-monitoring')
     .select('created_at, co2')
@@ -189,7 +187,6 @@ function downloadCSV() {
 }
 
 // === Real-Time Listener untuk Dashboard ===
-// MEMPERBAIKI: Menggunakan variabel baru 'supabaseClient'
 supabaseClient
   .channel('perubahan-co2-realtime')
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'co2-monitoring' }, payload => {
