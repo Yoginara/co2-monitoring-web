@@ -8,7 +8,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     /* Utility class custom untuk transisi section */
@@ -148,6 +147,16 @@
       </div>
     </section>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://fjxqacuifwiyowblnzkj.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqeHFhY3VpZndpeW93YmxuemtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MTYyNzksImV4cCI6MjA5NDk5MjI3OX0.cF7AG0WrGQ7ZS638YkOVpR-KnultzgL3ieKEEZFnrCw";
+
+    // Simpan objek ke window browser agar file script.js bisa langsung membacanya
+    window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  </script>
 
   <script src="script.js"></script>
 </body>
